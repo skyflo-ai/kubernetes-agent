@@ -1,0 +1,337 @@
+---
+description: What is Skyflo.ai - Project InformationThis project is licensed under the Business Source License 1.1 - see the [LICENSE](LICENSE) file for details. The license transitions to Apache 2.0 after 4 years.
+globs: *.tsx
+alwaysApply: false
+---
+# Skyflo.ai - Kubernetes Agent
+
+Repo Link: https://github.com/skyflo-ai/kubernetes-agent
+
+Description: Skyflo.ai's Agent for your Kubernetes cluster.
+
+Tech Stack: Go [go.mod](mdc:go.mod)
+
+## 1. Executive Summary
+
+Skyflo.ai provides AI-powered agents for AWS and Kubernetes management through natural language interactions. Our mission is to democratize cloud operations by making infrastructure management accessible through conversational AI, while maintaining enterprise-grade security and compliance.
+
+| Strategic Component | Description |
+|---------------------|-------------|
+| **Vision** | Create the industry standard for AI-powered cloud operations that bridges the gap between human operators and cloud infrastructure. |
+| **Business Model** | Open-core model with free open source edition and premium enterprise extensions. |
+| **Value Proposition** | • Community: Free AI agents for cloud management<br>• Enterprises: Enhanced security, compliance, and multi-cloud capabilities<br>• Contributors: Platform combining AI, cloud, and DevOps |
+
+This document serves as the authoritative reference for Skyflo.ai's governance, architecture, and strategic direction.
+
+## 2. System Architecture
+
+### 2.1 Product Overview
+
+Skyflo.ai is a B2B SaaS product enabling the creation of secure, SOC2-compliant AI agents that automate DevOps and cloud operations. The platform supports:
+
+- AWS and Kubernetes management
+- Cloud cost monitoring and optimization
+- Natural language Q&A about cloud resources
+
+### 2.2 Repository Structure
+
+#### Core Repositories (Open Source)
+
+| Repository | Purpose | License | Key Components |
+|------------|---------|---------|----------------|
+| **`skyflo`** | Main entry point | Apache 2.0 | Documentation, examples, installation scripts, Helm charts, Terraform modules, CloudFormation templates |
+| **`skyflo-engine`** | Core intelligence | BUSL 1.1 | Temporal workflows, knowledge graph, LLM integrations |
+| **`skyflo-api`** | Backend server | BUSL 1.1 | Django app, webhooks, authentication services |
+| **`skyflo-frontend`** | User interface | Apache 2.0 | Chat interface, resource visualization |
+| **`skyflo-k8s-crawler`** | K8s resources | Apache 2.0 | K8s resource crawlers and watchers |
+| **`skyflo-aws-crawler`** | AWS resources | Apache 2.0 | AWS resource crawlers and watchers |
+
+#### Enterprise Repositories (Private)
+
+| Repository | Purpose | License | Key Components |
+|------------|---------|---------|----------------|
+| **`skyflo-enterprise`** | Enterprise core | BUSL 1.1 | Specialized agents, multi-cloud support |
+| **`skyflo-enterprise-api`** | Enterprise backend | BUSL 1.1 | Extended API services |
+| **`skyflo-enterprise-frontend`** | Enterprise UI | Apache 2.0 | Extended UI components |
+
+
+### 2.3 Agent Architecture
+
+Customers install "Agents" for their cloud resources following this flow:
+
+[agents-flow.png](mdc:public/images/agents-flow.png)
+
+#### AWS Agent Flow
+
+1. Customer creates an account and Agent on the platform
+2. Platform provides a script with secure AuthKey (JWT)
+3. Customer runs script with appropriate IAM privileges, deploying:
+   
+   **A. Initial Crawler:**
+   - Assumes AdministratorAccess
+   - Creates Lambda function to scan AWS services
+   - Extracts required data based on configuration
+   - Sends data to Skyflo.ai backend
+
+   **B. Real-time Watcher:**
+   - Sets up IAM policy for CloudTrail and EventBridge
+   - Creates EventBridge rule targeting Skyflo.ai backend
+
+### 2.5 API Architecture
+
+**Base URL:** `https://api.skyflo.ai/v1`
+
+**Authentication:** All APIs require Bearer token authentication.
+
+#### Core Endpoints
+
+1. **Agent Authentication**
+   - `POST /agents/auth-key` - Creates authentication for new agent installations
+
+2. **Agent Operations**
+   - `POST /agents/{agent_id}/alive` - Agent status and initial configuration
+
+3. **Crawl Webhooks**
+   - `POST /webhooks/{provider}/{agent_id}/crawl-complete` - Initial scan results
+   - `POST /webhooks/{provider}/{agent_id}/continuous-crawl` - Real-time updates
+
+#### Security Implementation
+
+1. **Authentication:** JWT-based with short-lived tokens and 30-day rotation
+2. **Validation:** Rate limiting, payload restrictions, header validation
+3. **Monitoring:** Authentication logging, audit trails, performance metrics
+
+
+## 3. Differentiation: Open Source vs Enterprise
+
+| Feature | Open Source | Enterprise |
+|---------|-------------|------------|
+| Cloud Support | Single cloud/cluster | Multi-cloud/region |
+| Security | Basic | Advanced compliance agents |
+| Optimization | Basic | Cost optimization agents |
+| Access Control | Standard auth | Team management, RBAC, SSO |
+| Deployment | Self-hosted | Self-hosted or on-premise |
+| Support | Community | Priority with SLAs |
+
+## 4. Community Engagement
+
+### 4.1 Contribution Channels
+
+1. **Code:** Issue tracking, PR reviews, contributor recognition
+2. **Documentation:** Wiki, guides, multilingual support
+3. **Support:** GitHub Discussions, Discord, Stack Overflow
+
+### 4.2 Community Activities
+
+1. **Events:** Monthly calls, quarterly summits, annual conference
+2. **Content:** Blog posts, case studies, tutorials, livestreams
+3. **Recognition:** Contributor spotlights, release acknowledgments
+
+### 4.3 Community Metrics
+
+- GitHub stars (target: 1K in 6 months, 5K in 12 months)
+- Active contributors (target: 20+ regular contributors in 12 months)
+- Issue resolution time (target: <7 days for critical issues)
+
+## 5. Contributor Guidelines
+
+### 5.1 Contribution Process
+
+1. **Issue Creation/Selection:** Find or create an issue
+2. **Development Setup:** Fork, clone, and set up environment
+3. **Branch Creation:** Use `feature/issue-number-desc` or `fix/issue-number-desc`
+4. **Development:** Follow style guides, write tests, update docs
+5. **Pull Request:** Reference issue number, complete PR template
+
+### 5.2 Code Review
+
+- Initial review within 2-3 business days
+- Feedback addressed by contributor
+- Final approval from core maintainer
+- Merge by maintainers
+
+### 5.3 Code Style
+
+- Python: PEP 8
+- JavaScript/TypeScript: Airbnb
+- Documentation: Markdown
+- Commits: Conventional commits format
+
+## 6. Project Roadmap
+
+| Phase | Timeline | Key Milestones |
+|-------|----------|----------------|
+| **1: Foundation** | Q2 2023 ✓ | Basic AWS/K8s support, LLM integration, knowledge graph |
+| **2: Open Source Launch** | Q2-Q3 2023 | Repository structure, documentation, website |
+| **3: Community Growth** | Q4 2023-Q1 2024 | 1K GitHub stars, regular community calls, 5+ contributors |
+| **4: Enterprise Development** | Q1-Q2 2024 | First enterprise customers, security audit completion |
+| **5: Expansion** | Q3-Q4 2024 | 5K+ stars, 20+ contributors, 10+ enterprise customers |
+
+## 7. Distribution and Maintenance
+
+### 7.1 Distribution Channels
+
+1. **Official Website:** `https://download.skyflo.ai/{tool}/{version}/{artifact}`
+2. **GitHub Releases:** Attached to `skyflo` releases
+3. **Package Registries:** Helm charts (Artifact Hub), Terraform modules (Registry)
+
+### 7.2 Installation Methods
+
+- **Helm:** Direct URL, repository, or GitHub release
+- **Terraform:** Registry module or GitHub source
+- **Simplified:** All-in-one installer script
+
+### 7.3 Versioning
+
+- Infrastructure versions aligned with application releases
+- Backward compatibility for minor versions
+- Compatibility matrix in documentation
+
+### 7.4 Infrastructure Security
+
+1. **Distribution Architecture:**
+   - Primary: AWS S3 + CloudFront with Route53
+   - Backup: GitHub Pages as secondary mirror
+
+2. **Security Controls:**
+   - Modern TLS configuration (1.2+, strong ciphers)
+   - Content integrity verification (signatures, checksums)
+   - Access controls and DDoS protection
+
+3. **Supply Chain Security:**
+   - Artifact signing with Sigstore/Cosign
+   - SBOM generation in SPDX format
+   - Immutable artifacts (S3 Object Lock)
+   - Dependency scanning and pinning
+
+### 7.5 Installation Management
+
+The `skyflo` repository serves as the central entry point for all installation processes, ensuring users can easily deploy the latest, released, and approved artifacts:
+
+1. **Unified Release Process:**
+   - All components (application and infrastructure) are released together with coordinated versioning
+   - Infrastructure code is tested and validated as part of the same CI/CD pipeline
+   - Single source of truth for compatibility between components
+
+2. **Installation Orchestration:**
+   - Main repository contains installation scripts and utilities
+   - Automated version checking and dependency resolution
+   - Scripts validate artifact integrity via checksums and signatures
+   - Support for various deployment scenarios (local, cloud, air-gapped)
+
+3. **Artifact Management:**
+   - Release tags in the main repository trigger artifact publishing
+   - Artifacts are cryptographically signed and verified
+   - Clear upgrade paths and compatibility matrices published with each release
+   - Immutable versioned artifacts with documented provenance
+
+4. **Distribution Security:**
+   - Installation scripts verify TLS certificates and artifact signatures
+   - Redundant distribution channels (CDN, GitHub, package registries)
+   - Transparent security scanning and vulnerability reporting
+
+This consolidated approach ensures maximum visibility (GitHub stars) while providing enterprise-grade security and ease of use for all installation pathways.
+
+## 8. Governance and Decision-Making
+
+### 8.1 Project Leadership
+
+1. **Core Team:** Day-to-day development (founding engineers)
+2. **Technical Steering Committee:** Strategic technical decisions (3-5 members)
+3. **Advisory Board:** Industry experts providing guidance
+
+### 8.2 Decision Process
+
+| Change Type | Process | Approval |
+|-------------|---------|----------|
+| Minor (bugs, small features) | PR review | One maintainer |
+| Significant (new features) | RFC with 2-week comment period | TSC members |
+| Strategic (roadmap, major versions) | Proposal with community feedback | TSC with advisory input |
+
+### 8.3 Conflict Resolution
+
+- Clear escalation path for technical disagreements
+- Code of Conduct enforcement
+- Independent mediation for serious conflicts
+
+## 9. CI/CD and Security
+
+### 9.1 Security Controls
+
+1. **Access Control:**
+   - Branch protection with signed commits
+   - Multi-party reviews
+   - Restricted write access
+
+2. **Quality Enforcement:**
+   - Automated validation and linting
+   - Security scanning (tfsec, checkov, Trivy)
+   - SBOM generation and verification
+
+### 9.2 CI/CD Pipeline
+
+1. **Validate:** Syntax checking and linting
+2. **Security Scan:** Vulnerability and dependency scanning
+3. **Build:** Artifact creation and packaging
+4. **Sign:** Cryptographic signing
+5. **Staging:** Automatic deployment with approval
+6. **Production Approval:** Founder/approver sign-off
+7. **Production Deployment:** Release with automation
+
+### 9.3 Approval Process
+
+- GitHub Environments Protection for production
+- Two-factor authentication requirement
+- Comprehensive audit logging
+- Emergency procedures with post-incident review
+
+## 10. Success Metrics
+
+### 10.1 Open Source Community
+
+- GitHub stars/forks growth
+- Contributor activity
+- PR velocity and acceptance
+- Documentation quality
+
+### 10.2 Adoption
+
+- Downloads and installations
+- Active deployments
+- Community engagement
+
+### 10.3 Business
+
+- Customer acquisition cost
+- Conversion rate from open source
+- Revenue metrics (ARR, NRR, LTV)
+
+### 10.4 Product Quality
+
+- Test coverage
+- Security vulnerability resolution
+- Performance benchmarks
+- System reliability
+
+## 11. Marketing and Communication
+
+### 11.1 Target Audiences
+
+1. **DevOps Engineers & SREs:** Technical tutorials, reference architectures
+2. **Engineering Managers:** ROI calculations, case studies, security benefits
+3. **Cloud Architects:** Integration patterns, multi-cloud strategies
+4. **CIOs/CTOs:** Digital transformation, AI strategy, cost optimization
+
+### 11.2 Communication Channels
+
+1. **Website:** Product information, documentation, enterprise details
+2. **GitHub:** Code, technical documentation, issue tracking
+3. **Community:** Discord server (https://discord.gg/NqDKXPJK), tech talks, office hours
+4. **Social Media:** Twitter/X (https://x.com/skyflo_ai), LinkedIn, YouTube (https://www.youtube.com/@SkyfloAI)
+
+### 11.3 Content Strategy
+
+1. **Educational:** Tutorials, advanced use cases, integration guides
+2. **Thought Leadership:** AI in DevOps, industry trends, conference talks
+3. **Case Studies:** Success stories, implementation examples, ROI focus
+4. **Release Communication:** Release notes, feature highlights, roadmap updates
